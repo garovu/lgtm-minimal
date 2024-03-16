@@ -18,6 +18,14 @@ loki-stack:
     image:
       repository: grafana/loki
       tag: 2.8.1
+    storage_config:
+      boltdb_shipper:
+        active_index_directory: /loki/index
+        cache_location: /loki/index_cache
+        shared_store: s3
+      aws:
+        s3: http://admin:supersecret@http://lgtm-minio.default
+        s3forcepathstyle: true
 
   promtail:
     enabled: false
@@ -56,10 +64,10 @@ tempo:
       # store traces in s3
       s3:
         bucket: tempo                                   # store traces in this bucket
-        endpoint: s3.dualstack.us-east-2.amazonaws.com  # api endpoint
-        # access_key: ...                                 # optional. access key when using static credentials.
-        # secret_key: ...                                 # optional. secret key when using static credentials.
-        insecure: true                                 # optional. enable if endpoint is http
+        endpoint: http://lgtm-minio.default             # api endpoint
+        access_key: admin                               # optional. access key when using static credentials.
+        secret_key: supersecret                         # optional. secret key when using static credentials.
+        insecure: true                                  # optional. enable if endpoint is http
     
 
 # Mimir configuration
