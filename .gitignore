@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Helm
+charts/*/charts
+charts/grafana
+charts/tempo
+charts/loki-stack

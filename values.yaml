@@ -1,0 +1,29 @@
+# values.yaml for LGTM Helm Chart
+
+# Grafana configuration
+grafana:
+  enabled: true
+  image: grafana/grafana
+  tag: latest
+  port: 3000
+
+# Loki configuration
+loki:
+  enabled: true
+  image: grafana/loki
+  tag: latest
+  port: 3100
+
+# Tempo configuration
+tempo:
+  enabled: true
+  image: grafana/tempo
+  tag: latest
+  port: 3200
+
+# Mimir configuration
+mimir:
+  enabled: true
+  image: grafana/mimir
+  tag: latest
+  port: 3300

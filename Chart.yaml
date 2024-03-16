@@ -1,0 +1,45 @@
+apiVersion: v2
+name: lgtm-minimal
+description: A Helm chart for deploy LGTM-minimal Kubernetes cluster.
+maintainers:
+  - name: garovu
+    email: garovu.dev@gmail.com
+    url: https://github.com/garovu
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "1.1.0"
+
+dependencies:
+  - name: mimir
+    version: 2.11.0
+    condition: mimir.enabled
+  - name: loki-stack
+    version: 2.3.0
+    repository: https://grafana.github.io/loki/charts
+    condition: loki.enabled
+  - name: grafana
+    version: 10.3.3
+    repository: https://grafana.github.io/helm-charts
+    condition: grafana.enabled
+  - name: tempo
+    version: 0.3.0
+    repository: https://grafana.github.io/tempo/charts
+    condition: tempo.enabled
