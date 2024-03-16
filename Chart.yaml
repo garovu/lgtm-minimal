@@ -29,17 +29,18 @@ appVersion: "1.1.0"
 
 dependencies:
   - name: mimir
-    version: 2.11.0
+    version: 0.1.0
+    # repository: https://charts.bitnami.com/bitnami
     condition: mimir.enabled
-  - name: loki-stack
-    version: 2.3.0
+  - name: loki
+    version: 2.10.2
     repository: https://grafana.github.io/loki/charts
     condition: loki.enabled
   - name: grafana
-    version: 10.3.3
+    version: 7.3.6
     repository: https://grafana.github.io/helm-charts
     condition: grafana.enabled
   - name: tempo
-    version: 0.3.0
+    version: 1.7.2
     repository: https://grafana.github.io/tempo/charts
     condition: tempo.enabled

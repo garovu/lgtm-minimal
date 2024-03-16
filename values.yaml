@@ -3,23 +3,51 @@
 # Grafana configuration
 grafana:
   enabled: true
-  image: grafana/grafana
-  tag: latest
-  port: 3000
+  image:
+    repository: grafana/grafana
+    tag: ""
+  # Administrator credentials when not using an existing secret (see below)
+  adminUser: admin
+  adminPassword: admin
 
 # Loki configuration
-loki:
+loki-stack:
   enabled: true
-  image: grafana/loki
-  tag: latest
-  port: 3100
+  loki:
+    enabled: true
+    image:
+      repository: grafana/loki
+      tag: 2.8.1
+
+  promtail:
+    enabled: true
+
+  fluent-bit:
+    enabled: false
+
+  grafana:
+    enabled: false
+
+  prometheus:
+    enabled: false
+
+  filebeat:
+    enabled: false
+
+  logstash:
+    enabled: false
+    image: grafana/logstash-output-loki
+    imageTag: 1.0.1
 
 # Tempo configuration
 tempo:
   enabled: true
-  image: grafana/tempo
-  tag: latest
-  port: 3200
+  tempo:
+    repository: grafana/tempo
+    tag: ""
+  server:
+    http_listen_port: 3100   # -- HTTP server listen port
+    
 
 # Mimir configuration
 mimir:
