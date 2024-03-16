@@ -8,3 +8,8 @@ charts/*/charts
 charts/grafana
 charts/tempo
 charts/loki-stack
+charts/minio
+charts/*.tgz
+
+Chart.lock
+

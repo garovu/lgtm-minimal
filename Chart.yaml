@@ -32,9 +32,9 @@ dependencies:
     version: 0.1.0
     # repository: https://charts.bitnami.com/bitnami
     condition: mimir.enabled
-  - name: loki
-    version: 2.10.2
-    repository: https://grafana.github.io/loki/charts
+  - name: loki-stack
+    version: 2.10.0
+    repository: https://grafana.github.io/helm-charts
     condition: loki.enabled
   - name: grafana
     version: 7.3.6
@@ -42,5 +42,9 @@ dependencies:
     condition: grafana.enabled
   - name: tempo
     version: 1.7.2
-    repository: https://grafana.github.io/tempo/charts
+    repository: https://grafana.github.io/helm-charts
     condition: tempo.enabled
+  - name: minio
+    version: 13.8.4
+    repository: https://charts.bitnami.com/bitnami
+    condition: minio.enabled

@@ -20,7 +20,7 @@ loki-stack:
       tag: 2.8.1
 
   promtail:
-    enabled: true
+    enabled: false
 
   fluent-bit:
     enabled: false
@@ -46,12 +46,39 @@ tempo:
     repository: grafana/tempo
     tag: ""
   server:
-    http_listen_port: 3100   # -- HTTP server listen port
+    http_listen_port: 3100   # HTTP server listen port
+  storage:
+    trace:
+      # tempo storage backend
+      # refer https://grafana.com/docs/tempo/latest/configuration/
+      ## Use minio s3 for example
+      backend: s3
+      # store traces in s3
+      s3:
+        bucket: tempo                                   # store traces in this bucket
+        endpoint: s3.dualstack.us-east-2.amazonaws.com  # api endpoint
+        # access_key: ...                                 # optional. access key when using static credentials.
+        # secret_key: ...                                 # optional. secret key when using static credentials.
+        insecure: true                                 # optional. enable if endpoint is http
     
 
 # Mimir configuration
 mimir:
   enabled: true
-  image: grafana/mimir
-  tag: latest
-  port: 3300
+  image:
+    repository: grafana/mimir
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "2.11.0"
+
+# # Minio configuration
+minio:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/minio
+    tag: 2024.3.15-debian-12-r0
+  mode: standalone
+  auth:
+    rootUser: admin
+    rootPassword: supersecret
+  defaultBuckets: "loki, mimir, tempo"
