@@ -82,7 +82,7 @@ autoscaling:
 volumes:
   - name: config
     configMap:
-      name: mimir-monolithic-cm
+      name: "mimir-cm"
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
@@ -99,7 +99,7 @@ affinity: {}
 # Configuration for `minio` child chart
 # -------------------------------------
 minio:
-  enabled: true
+  enabled: false
   replicas: 1
   # Minio requires 2 to 16 drives for erasure code (drivesPerNode * replicas)
   # https://docs.min.io/docs/minio-erasure-code-quickstart-guide
@@ -132,7 +132,7 @@ mimir:
         backend: s3
         s3:
           endpoint: "{{ .Release.Name }}-minio:9000"
-          access_key_id: mimir
+          access_key_id: admin
           secret_access_key: supersecret
           insecure: true
           bucket_name: mimir

@@ -1,5 +1,5 @@
 apiVersion: v2
-name: mimir-monolithic
+name: mimir
 description: A Helm chart for deploy monolithic Grafana Mimir in Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
