@@ -1,6 +1,6 @@
 # LGTM Minimal Chart
 
-This is a minimal chart for testing LGTM (Loki, Grafana, Tempo, Mimir). It provides a basic setup to quickly get started with LGTM.
+This is a minimal chart for testing LGTM (Loki, Grafana, Tempo, Mimir). It provides a basic setup to get started with the LGTM stack quickly. I built this chart using monolithic deployment mode to make everything easier to deploy and less-consumer resources.
 
 ## Prerequisites
 
@@ -11,10 +11,12 @@ Before getting started, make sure you have the following prerequisites installed
 
 ## Versions
 
+Chart version: 0.1.1
+
 - Grafana:
-- Mimir:
-- Loki:
-- Tempo:
+- Mimir: 2.13
+- Loki: 2.8.1
+- Tempo: 3.7.10
 
 ## Installation
 
@@ -23,13 +25,13 @@ To install the LGTM minimal chart, follow these steps:
 1. Clone the repository:
 
     ```shell
-    git clone https://github.com/grafana/helm-charts.git
+    https://github.com/garovu/lgtm-minimal.git 
     ```
 
 2. Change to the `lgtm-minimal` directory:
 
     ```shell
-    cd helm-charts/lgtm-minimal
+    cd lgtm-minimal
     ```
 
 3. Install the chart using Helm:

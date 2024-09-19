@@ -1,0 +1,27 @@
+# Project Notes
+
+## Project Name
+Grafana Labs - LGTM Minimal
+
+## Description
+This project is a minimal setup for LGTM (Loki, Grafana, Tempo, Mimir) stack.
+
+## Directory Structure
+- `/templates`: Contains template files and configurations.
+- `/scripts`: Contains utility scripts for setup and maintenance.
+- `/docs`: Documentation related to the project.
+
+## Setup Instructions
+1. Clone the repository.
+2. Navigate to the project directory.
+3. Follow the setup instructions in the `README.md` file.
+
+## Important Links
+- [Grafana Labs](https://grafana.com/)
+- [LGTM Stack Documentation](https://grafana.com/docs/)
+
+## Contact
+For any questions or support, please contact the project maintainer at [garovu.dev@gmail.com].
+
+## Last Updated
+Sep 2024
