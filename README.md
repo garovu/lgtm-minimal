@@ -11,12 +11,21 @@ Before getting started, make sure you have the following prerequisites installed
 
 ## Versions
 
-Chart version: 0.1.1
+Chart version: 0.1.2
 
-- Grafana:
+- Grafana: 8.5.1
+- Mimir: 0.1.0
+- Loki: 2.10.2
+- Tempo: 1.10.3
+- Minio: 14.7.11
+  
+## LGTM Images Versions
+
+- Grafana: 11.2.0
 - Mimir: 2.13
 - Loki: 2.8.1
-- Tempo: 3.7.10
+- Tempo: 2.5
+- Minio: 2024.3.15
 
 ## Installation
 
@@ -38,6 +47,16 @@ To install the LGTM minimal chart, follow these steps:
 
     ```shell
     helm install lgtm .
+    ```
+
+4. Check Configuration values on output file: `lgtm.yaml`
+
+    ```shell
+    cd lgtm-minimal
+    helm repo update 
+    helm dependency update
+    helm dependency build
+    helm template lgtm . > lgtm.yaml 
     ```
 
 ## Configuration
