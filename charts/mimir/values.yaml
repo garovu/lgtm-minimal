@@ -8,7 +8,7 @@ image:
   repository: grafana/mimir
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.11.0"
+  tag: "2.13.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -171,6 +171,9 @@ mimir:
         kvstore:
           store: memberlist
         replication_factor: 1
+
+    limits:
+      native_histograms_ingestion_enabled: true
 
     server:
       http_listen_port: 9009

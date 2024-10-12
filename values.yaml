@@ -9,6 +9,62 @@ grafana:
   # Administrator credentials when not using an existing secret (see below)
   adminUser: admin
   adminPassword: admin
+  grafana.ini:
+    dataproxy:
+      max_idle_connections: 500
+  sidecar:
+    datasources:
+      enabled: true
+    dashboards:
+      enabled: true
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: "http://lgtm-loki:3100"
+        version: 1
+        uid: loki
+        jsonData:
+          maxLines: 1000
+          derivedFields:
+            - datasourceUid: tempo
+              matcherType: label
+              matcherRegex: traceid
+              name: TraceID
+              # url will be interpreted as query for the datasource
+              url: '$${__value.raw}'
+              urlDisplayLabel: 'View Trace'
+      - name: Tempo
+        type: tempo
+        url: "http://lgtm-tempo:3100"
+        access: proxy
+        basicAuth: false
+        uid: tempo
+        jsonData:
+          tracesToLogsV2:
+            datasourceUid: 'loki'
+            spanStartTimeShift: '-1s'
+            spanEndTimeShift: '1s'
+            # tags: ['namespace', 'pod']
+            filterByTraceID: false
+            filterBySpanID: false
+            customQuery: true
+            query: '{namespace="$${__span.tags.namespace}", pod="$${__span.tags.pod}"} |="$${__trace.traceId}"'
+          tracesToMetrics:
+            datasourceUid: 'mimir'
+            spanStartTimeShift: '-1m'
+            spanEndTimeShift: '1m'
+            tags: [{ key: 'app'}]
+            queries:
+              - name: 'Sample query'
+                query: 'sum(rate(process_runtime_jvm_cpu_utilization{$$__tags}[5m]))'
+      - name: Mimir
+        type: prometheus
+        url: "http://lgtm-mimir:9009/prometheus"
+        uid: mimir
 
 # Loki configuration
 loki-stack:
@@ -18,14 +74,26 @@ loki-stack:
     image:
       repository: grafana/loki
       tag: 2.8.1
+    schema_config:
+      configs:
+      - from: "2024-09-01"
+        index:
+          period: 24h
+          prefix: index_
+        object_store: s3
+        schema: v11
+        store: boltdb-shipper
     storage_config:
       boltdb_shipper:
-        active_index_directory: /loki/index
-        cache_location: /loki/index_cache
+        active_index_directory: /data/loki/index
+        cache_location: /data/loki/cache
         shared_store: s3
+      filesystem:
+        directory: /data/loki/chunks
       aws:
-        s3: http://admin:supersecret@http://lgtm-minio.default
+        s3: http://admin:supersecret@lgtm-minio.default:9000/loki
         s3forcepathstyle: true
+        insecure: true
 
   promtail:
     enabled: false
@@ -55,19 +123,47 @@ tempo:
     tag: ""
   server:
     http_listen_port: 3100   # HTTP server listen port
-  storage:
-    trace:
-      # tempo storage backend
-      # refer https://grafana.com/docs/tempo/latest/configuration/
-      ## Use minio s3 for example
-      backend: s3
-      # store traces in s3
-      s3:
-        bucket: tempo                                   # store traces in this bucket
-        endpoint: http://lgtm-minio.default             # api endpoint
-        access_key: admin                               # optional. access key when using static credentials.
-        secret_key: supersecret                         # optional. secret key when using static credentials.
-        insecure: true                                  # optional. enable if endpoint is http
+multitenancy_enabled: false
+usage_report:
+  reporting_enabled: true
+compactor:
+  compaction:
+    block_retention: 24h
+distributor:
+  receivers:
+        jaeger:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:14250
+            thrift_binary:
+              endpoint: 0.0.0.0:6832
+            thrift_compact:
+              endpoint: 0.0.0.0:6831
+            thrift_http:
+              endpoint: 0.0.0.0:14268
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+ingester:
+  max_block_duration: 5m #https://community.grafana.com/t/tempo-ram-usage-for-6k-spans-per-hour/63801/13
+server:
+      http_listen_port: 3100
+storage:
+  trace:
+    # tempo storage backend
+    # refer https://grafana.com/docs/tempo/latest/configuration/
+    ## Use minio s3 for example
+    backend: s3
+    # store traces in s3
+    s3:
+      bucket: tempo                                   # store traces in this bucket
+      endpoint: "lgtm-minio.default:9000"             # api endpoint
+      access_key: admin                               # optional. access key when using static credentials.
+      secret_key: supersecret                         # optional. secret key when using static credentials.
+      insecure: true                                  # optional. enable if endpoint is http
     
 
 # Mimir configuration
@@ -76,7 +172,17 @@ mimir:
   image:
     repository: grafana/mimir
     # Overrides the image tag whose default is the chart appVersion.
-    tag: "2.11.0"
+    tag: "2.13.0"
+  multitenancy_enabled: false
+  common:
+    storage:
+      backend: s3
+      s3:
+        endpoint: "lgtm-minio.default:9000"
+        access_key_id: admin
+        secret_access_key: supersecret
+        insecure: true
+        bucket_name: mimir
 
 # # Minio configuration
 minio:
